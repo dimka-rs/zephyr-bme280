@@ -1,0 +1,12 @@
+identifier: ebyte_nrf52805
+name: EBYTE-NRF52805
+type: mcu
+arch: arm
+toolchain:
+  - zephyr
+  - gnuarmemb
+  - xtools
+supported:
+  - counter
+ram: 24
+flash: 192
