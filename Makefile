@@ -24,7 +24,7 @@ flash:
 
 flashst: build/zephyr/zephyr.hex
 	@echo Flashing: $<
-	$(OPENOCD)/src/openocd
+	$(OPENOCD)/src/openocd \
 		-s $(OPENOCD)/tcl \
 		-f interface/stlink.cfg \
 		-f target/nrf52.cfg \
