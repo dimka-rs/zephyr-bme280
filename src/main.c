@@ -19,6 +19,8 @@ void main(void)
 	bool led_is_on = true;
 	int ret;
 
+	printk("Build date: " __DATE__ " " __TIME__"\n");
+
 	dev = device_get_binding("GPIO_0");
 	if (dev == NULL) {
 		return;

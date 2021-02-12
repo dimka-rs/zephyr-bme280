@@ -19,9 +19,6 @@ guiconfig:
 init:
 	@echo "source $(HOME)/zephyrproject/zephyr/zephyr-env.sh"
 
-flash:
-	west flash
-
 flashst: build/zephyr/zephyr.hex
 	@echo Flashing: $<
 	$(OPENOCD)/src/openocd \
