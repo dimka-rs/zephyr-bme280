@@ -19,9 +19,15 @@ guiconfig:
 init:
 	@echo "source $(HOME)/zephyrproject/zephyr/zephyr-env.sh"
 
+flash:
+	west flash
+
 flashst: build/zephyr/zephyr.hex
 	@echo Flashing: $<
-	$(OPENOCD)/src/openocd -s $(OPENOCD)/tcl -f interface/stlink.cfg -f target/nrf52.cfg \
+	$(OPENOCD)/src/openocd
+		-s $(OPENOCD)/tcl \
+		-f interface/stlink.cfg \
+		-f target/nrf52.cfg \
 		-c init \
 		-c "reset init" \
 		-c halt \
