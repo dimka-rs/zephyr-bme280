@@ -55,6 +55,7 @@ void main(void)
 
     while (1) {
         struct sensor_value temp, press, humidity;
+        uint64_t uptime = k_uptime_get();
 
         if (bme280 != NULL)
         {
@@ -63,9 +64,9 @@ void main(void)
             sensor_channel_get(bme280, SENSOR_CHAN_PRESS, &press);
             sensor_channel_get(bme280, SENSOR_CHAN_HUMIDITY, &humidity);
 
-            printk("temp: %d.%06d; press: %d.%06d; humidity: %d.%06d\n",
-                temp.val1, temp.val2, press.val1, press.val2,
-                humidity.val1, humidity.val2);
+            printk("[%6lld.%03lld] T: %d.%02d C; P: %d.%02d kPa; H: %d.%02d %%\n",
+                uptime/1000, uptime%1000, temp.val1, temp.val2/10000,
+                press.val1, press.val2/10000, humidity.val1, humidity.val2/10000);
         }
 
         gpio_pin_set(gpio0, LED_PIN, (int)led_is_on);
