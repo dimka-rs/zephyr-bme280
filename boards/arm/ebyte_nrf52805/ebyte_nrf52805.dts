@@ -61,7 +61,7 @@
     sda-pin = <12>;
     scl-pin = <5>;
 
-    bme280@77 {
+    bme280@76 {
         compatible = "bosch,bme280";
         reg = <0x76>; /* SDO pulled down */
         label = "BME280";
