@@ -7,14 +7,13 @@
 #include <zephyr.h>
 #include <device.h>
 #include <devicetree.h>
-#include <drivers/gpio.h>
 #include <drivers/sensor.h>
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/hci.h>
 #include <stdio.h> //snprintf
+#include <led.h>
 
 #define SLEEP_TIME_MS (10000)
-#define LED_PIN (4)
 
 #define BME280 DT_INST(0, bosch_bme280)
 #if DT_NODE_HAS_STATUS(BME280, okay)
@@ -26,7 +25,7 @@
 
 uint8_t devname[25];
 static volatile uint8_t ble_adv_start = 0;
-
+struct queue_led_item_t queue_led_item;
 static const struct bt_data ad[] = {
     BT_DATA_BYTES(BT_DATA_FLAGS, BT_LE_AD_NO_BREDR),
     BT_DATA_BYTES(BT_DATA_UUID16_ALL, 0xaa, 0xfe),
@@ -103,7 +102,6 @@ void ble_update(void)
 
 void main(void)
 {
-    const struct device *gpio0;
     const struct device *bme280;
     int ret;
 
@@ -115,18 +113,6 @@ void main(void)
         printk("Bluetooth init failed (err %d)\n", ret);
     }
 
-    /* Configure LED */
-    gpio0 = device_get_binding("GPIO_0");
-    if (gpio0 == NULL)
-    {
-        return;
-    } else {
-        ret = gpio_pin_configure(gpio0, LED_PIN, GPIO_OUTPUT);
-        if (ret < 0)
-        {
-            return;
-        }
-    }
 
     /* Init env sensor */
     bme280 = device_get_binding(BME280_LABEL);
@@ -140,7 +126,10 @@ void main(void)
     while (1) {
         struct sensor_value temp, press, humidity;
 
-        gpio_pin_set(gpio0, LED_PIN, 1);
+        /* Indicate activity start */
+        queue_led_item.led_state = 1;
+        k_queue_append(&queue_led, (void *)&queue_led_item);
+
         if(ble_adv_start == 1)
         {
             ble_update();
@@ -160,7 +149,9 @@ void main(void)
                 press.val1, press.val2/10000, humidity.val1, humidity.val2/10000);
         }
 
-        gpio_pin_set(gpio0, LED_PIN, 0);
+        /* Indicate activity stop */
+        queue_led_item.led_state = 0;
+        k_queue_append(&queue_led, (void *)&queue_led_item);
 
         k_sleep(K_MSEC(SLEEP_TIME_MS));
     }
