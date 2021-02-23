@@ -11,7 +11,7 @@
 
 K_QUEUE_DEFINE(queue_led);
 
-void threadLED(void *dummy1, void *dummy2, void *dummy3)
+void led_main(void *dummy1, void *dummy2, void *dummy3)
 {
     ARG_UNUSED(dummy1);
     ARG_UNUSED(dummy2);
@@ -41,4 +41,4 @@ void threadLED(void *dummy1, void *dummy2, void *dummy3)
     }
 }
 
-K_THREAD_DEFINE(thread_led, STACKSIZE, threadLED, NULL, NULL, NULL, PRIORITY, 0, 0);
+K_THREAD_DEFINE(thread_led, STACKSIZE, led_main, NULL, NULL, NULL, PRIORITY, 0, 0);
